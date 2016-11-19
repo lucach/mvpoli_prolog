@@ -5,7 +5,7 @@ i=1
 while read test
 do
 	res=`echo $test | swipl -q -s mvpoli.pl`
-	if [ $res = "true." ]; then
+	if [ "$res" = "true." ]; then
                 echo '<testcase classname="test'$i'" name="test'$i'"/>' >> report.xml
         else
                 echo '<testcase classname="test'$i'" name="test'$i'">' >> report.xml
