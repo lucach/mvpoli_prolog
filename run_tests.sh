@@ -12,6 +12,7 @@ do
 		echo '<failure type="Fail"> '$res' </failure>' >> report.xml
 		echo '</testcase>' >> report.xml
         fi
+	i=$((i+1))
 done < tests.pl
 echo '</testsuite>' >> report.xml
 
