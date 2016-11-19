@@ -1,3 +1,4 @@
+
 <testsuite tests="3">
     <testcase classname="foo1" name="ASuccessfulTest"/>
 	    <testcase classname="foo3" name="AFailingTest">
