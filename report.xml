@@ -1,6 +1,0 @@
-<testsuite tests="2">
-<testcase classname="test1" name="test1"/>
-<testcase classname="test1" name="test1">
-<failure type="Fail"> false. </failure>
-</testcase>
-</testsuite>
