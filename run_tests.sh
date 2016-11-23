@@ -5,7 +5,7 @@ i=1
 while read test
 do
 	if [ "$test" != "" ]; then
-		res=`echo $test | swipl -q -s mvpoli.pl`
+		res=`echo "$test" | swipl -q -s mvpoli.pl`
 		if [ "$res" != "false." ]; then
                 	echo '<testcase classname="test'$i'" name="test'$i'"/>' >> report.xml
         	else
