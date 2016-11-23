@@ -97,3 +97,60 @@ pprint_polynomial(poly([M])) :-
 pprint_polynomial(poly([M | Monomials])) :-
     format('~@ + ', pprint_monomial(M)),
     pprint_polynomial(poly(Monomials)).
+
+%%      parse_varpower(Expression, v(Power, Variable))
+%       True if Expression is in the form Variable^Power.
+%       Also true if Expression is in the form without ^Power being
+%       explicitly setted. In the latter case, Power defaults to 1.
+
+parse_varpower(Variable, v(1, Variable)) :-
+    atomic(Variable).
+
+parse_varpower(Variable^Power, v(Power, Variable)) :-
+    atomic(Variable),
+    integer(Power).
+
+%%      parse_monomial(Expression, m(C, _, VPs))
+%       True if Expression is in the form E1 * E2 * ... * En, where for
+%       each Ei (i ranges from 1 to n) parse_varpower(Ei, _) is true.
+%       If the first expression is an integer, that number is C. Otherwise,
+%       C defaults to 1.
+
+parse_monomial(Coefficient, m(Coefficient, _TD, [])) :-
+    integer(Coefficient),
+    !.
+
+parse_monomial(Expression, m(1, _TD, [VP])) :-
+    parse_varpower(Expression, VP).
+
+parse_monomial(E1 * E2, m(C, TD, VPs)) :-
+    parse_varpower(E2, VP),
+    parse_monomial(E1, m(C, TD, OtherVPs)),
+    append([VP], OtherVPs, VPs).
+
+%%      lexicographicallyCompare(Operator, v(_P1, Var1), v(_P2, Var2))
+%       True if Operator is '=' and Var1 equals Var2.
+%         or if Operator is '<' and Var1 comes before Var2 in a lex. order
+%         or if Operator is '>' and Var2 comes after Var2 in a lex. order
+
+lexicographicallyCompare(<, v(_P1, Var1), v(_P2, Var2)) :-
+    Var1 @< Var2,
+    !.
+
+lexicographicallyCompare(=, v(_P1, Var1), v(_P2, Var2)) :-
+    Var1 = Var2,
+    !.
+
+lexicographicallyCompare(>, v(_P1, Var1), v(_P2, Var2)) :-
+    Var1 @> Var2,
+    !.
+
+%%      as_monomial(Expression, m(C, TD, SortedVPs))
+%       True if m(C, TD, SortedVPs) is the monomial corresponding to
+%       Expression, with a coefficient C, a total degree TD, and SortedVPs
+%       is a list of VarPower sorted using lexicographicallyCompare/3.
+
+as_monomial(Expression, m(C, TD, SortedVPs)) :-
+    parse_monomial(Expression, m(C, _, VPs)),
+    get_totaldegree(m(C, TD, VPs)),
+    predsort(lexicographicallyCompare, VPs, SortedVPs).
