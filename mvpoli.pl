@@ -163,4 +163,33 @@ coefficients(poly([]), []) :- !.
 
 coefficients(poly([m(C, _TD, _VPs) | Monomials]), [C | Coefficients]) :-
     coefficients(poly(Monomials), Coefficients).
-    
+
+%%      m_variables(Monomial, Variables)
+%       True if Variables is the list containing every variable that
+%       appears in Monomial. Variables can contain duplicates and it
+%       is not sorted in any specific order.
+
+m_variables(m(_C, _TD, []), []) :- !.
+
+m_variables(m(_C, _TD, [v(_Power, Var) | VPs]), [Var | Vars]) :-
+    m_variables(m(_, _, VPs), Vars).
+
+%%      p_variables(Monomials, Variables)
+%       True if Variables is a list resulting from the concatenation of
+%       the list of variables in every monomial appearing in Monomials,
+%       obtained with m_variables/2.
+
+p_variables([], []) :- !.
+
+p_variables([M | Monomials], Vars) :-
+    m_variables(M, Vars1),
+    p_variables(Monomials, Vars2),
+    append(Vars1, Vars2, Vars).
+
+%%      variables(Poly, Variables)
+%       True if Variables is a list of variables appearing in every monomial
+%       in Poly, it is sorted and does not contain duplicates.
+
+variables(poly(Monomials), SortedVars) :-
+    p_variables(Monomials, Vars),
+    sort(Vars, SortedVars).
