@@ -154,3 +154,13 @@ as_monomial(Expression, m(C, TD, SortedVPs)) :-
     parse_monomial(Expression, m(C, _, VPs)),
     get_totaldegree(m(C, TD, VPs)),
     predsort(lexicographicallyCompare, VPs, SortedVPs).
+
+%%      coefficients(Polynomial, Coefficients)
+%       True if Coefficients is a list where the i-th element is the
+%       coefficient of the i-th monomial of Polynomial.
+
+coefficients(poly([]), []) :- !.
+
+coefficients(poly([m(C, _TD, _VPs) | Monomials]), [C | Coefficients]) :-
+    coefficients(poly(Monomials), Coefficients).
+    
