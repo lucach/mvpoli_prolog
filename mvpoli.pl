@@ -193,3 +193,21 @@ p_variables([M | Monomials], Vars) :-
 variables(poly(Monomials), SortedVars) :-
     p_variables(Monomials, Vars),
     sort(Vars, SortedVars).
+
+%%      maxdegree(Poly, Degree)
+%       True if Degree is the maximum degree of the monomials in Poly.
+
+maxdegree(poly([m(_C, TD, _VPs)]), TD) :- !.
+
+maxdegree(poly([m(_C, FirstMonomialDegree, _VPs) | Monomials]), MaxDegree) :-
+    maxdegree(poly(Monomials), Degree),
+    MaxDegree is max(FirstMonomialDegree, Degree).
+
+%%      mindegree(Poly, Degree)
+%       True if Degree is the minimum degree of the monomials in Poly.
+
+mindegree(poly([m(_C, TD, _VPs)]), TD) :- !.
+
+mindegree(poly([m(_C, FirstMonomialDegree, _VPs) | Monomials]), MinDegree) :-
+    mindegree(poly(Monomials), Degree),
+    MinDegree is min(FirstMonomialDegree, Degree).
