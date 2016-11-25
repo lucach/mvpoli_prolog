@@ -28,3 +28,14 @@ as_polynomial(-1 * x + x * y, poly([m(1, 2, [v(1, x), v(1, y)]), m(-1, 1, [v(1, 
 
 polyval(x^2 * y, [2, 2], 8).
 polyval(x^2 * y + 3 * x, [2, 2], 14).
+
+%%%% polysum
+
+polysum(m(2, 1, [v(1, a)]), m(3, 1, [v(1, a)]), poly([m(5, 1, [v(1, a)])])).
+
+%%%% polyminus
+
+polyminus(m(2, 1, [v(1, a)]), m(3, 1, [v(1, a)]), poly([m(-1, 1, [v(1, a)])])).
+
+%%% polytimes
+as_monomial(y * s^3 * t^3, M1), as_polynomial(-1 * x + x * y, P1), polytimes(M1, P1, poly([m(1, 9, [v(3, s), v(3, t), v(1, x), v(2, y)]), m(-1, 8, [v(3, s), v(3, t), v(1, x), v(1, y)])])).
