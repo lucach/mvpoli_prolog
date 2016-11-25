@@ -47,7 +47,12 @@ get_totaldegree(m(_C, TD, [VP | VPs])) :-
     TD is FirstElementDegree + PartialDegree.
 
 %%      pprint_varpower(v(Power, VarSymbol))
-%       True after printing to stdout VarSymbol^Power.
+%       True after printing to stdout VarSymbol^Power. Avoids printing ^Power
+%       if Power is 1.
+
+pprint_varpower(v(1, VarSymbol)) :-
+    write(VarSymbol),
+    !.
 
 pprint_varpower(v(Power, VarSymbol)) :-
     write(VarSymbol^Power).
