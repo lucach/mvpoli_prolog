@@ -139,11 +139,7 @@ parse_monomial(E1 * E2, m(C, TD, VPs)) :-
 %         or if Operator is '>' and Var2 comes after Var2 in a lex. order
 
 lexicographicallyCompareVP(<, v(_P1, Var1), v(_P2, Var2)) :-
-    Var1 @< Var2,
-    !.
-
-lexicographicallyCompareVP(=, v(_P1, Var1), v(_P2, Var2)) :-
-    Var1 = Var2,
+    Var1 @=< Var2,
     !.
 
 lexicographicallyCompareVP(>, v(_P1, Var1), v(_P2, Var2)) :-
@@ -241,7 +237,7 @@ parse_polynomial(Monomials - M, [m(NegCoeff, TD, VPs) | ParsedMonomials]) :-
     NegCoeff is -Coeff,
     parse_polynomial(Monomials, ParsedMonomials).
 
-%%      lexicographicallyCompareMonomialsWithoutEqual(Operator, VPs1, VPs2)
+%%      lexicographicallyCompareMonomials(Operator, VPs1, VPs2)
 %       True if Operator is '<' and lexicographicallyCompareVP/3 applied to
 %       the first elements of each list is true with Op = '<'.
 %       True if Operator is '>' and lexicographicallyCompareVP/3 applied to
@@ -249,42 +245,42 @@ parse_polynomial(Monomials - M, [m(NegCoeff, TD, VPs) | ParsedMonomials]) :-
 %       Otherwise, if the first VPs are equal, get rid of them and consider
 %       the following ones, repeating the comparison.
 
-lexicographicallyCompareMonomialsWithoutEqual(<, [], _) :- !.
+lexicographicallyCompareMonomials(<, [], _) :- !.
 
-lexicographicallyCompareMonomialsWithoutEqual(>, [_VP1 | _VPs1], []) :- !.
+lexicographicallyCompareMonomials(>, [_VP1 | _VPs1], []) :- !.
 
-lexicographicallyCompareMonomialsWithoutEqual(< , [VP1 | _VPs1], [VP2 | _VPs2]) :-
+lexicographicallyCompareMonomials(< , [VP1 | _VPs1], [VP2 | _VPs2]) :-
     lexicographicallyCompareVP(<, VP1, VP2),
     !.
 
-lexicographicallyCompareMonomialsWithoutEqual(> , [VP1 | _VPs1], [VP2 | _VPs2]) :-
+lexicographicallyCompareMonomials(> , [VP1 | _VPs1], [VP2 | _VPs2]) :-
     lexicographicallyCompareVP(>, VP1, VP2),
     !.
 
-lexicographicallyCompareMonomialsWithoutEqual(Op , [VP1 | VPs1], [VP2 | VPs2]) :-
+lexicographicallyCompareMonomials(Op , [VP1 | VPs1], [VP2 | VPs2]) :-
     lexicographicallyCompareVP(=, VP1, VP2),
-    lexicographicallyCompareMonomialsWithoutEqual(Op, VPs1, VPs2).
+    lexicographicallyCompareMonomials(Op, VPs1, VPs2).
 
 
-%%      degreeCompareMonomialsWithoutEqual(Operator, M1, M2)
+%%      degreeCompareMonomials(Operator, M1, M2)
 %       True if Operator is '<' and monomial M1 has a total degree greater
 %                                   than total degree of monomial M2.
 %         or if Operator is '>' and monomial M1 has a total degree less
 %                                   than total degree of monomial M2.
 %       When total degrees are equal, Operator is the Operator resulting from
-%       lexicographicallyCompareMonomialsWithoutEqual/3.
+%       lexicographicallyCompareMonomials/3.
 
-degreeCompareMonomialsWithoutEqual(<, m(_C1, TD1, _VPs1), m(_C2, TD2, _VPs2)) :-
+degreeCompareMonomials(<, m(_C1, TD1, _VPs1), m(_C2, TD2, _VPs2)) :-
     TD1 > TD2,
     !.
 
-degreeCompareMonomialsWithoutEqual(>, m(_C1, TD1, _VPs1), m(_C2, TD2, _VPs2)) :-
+degreeCompareMonomials(>, m(_C1, TD1, _VPs1), m(_C2, TD2, _VPs2)) :-
     TD1 < TD2,
     !.
 
-degreeCompareMonomialsWithoutEqual(Op, m(_C1, TD1, VPs1), m(_C2, TD2, VPs2)) :-
+degreeCompareMonomials(Op, m(_C1, TD1, VPs1), m(_C2, TD2, VPs2)) :-
     TD1 = TD2,
-    lexicographicallyCompareMonomialsWithoutEqual(Op, VPs1, VPs2).
+    lexicographicallyCompareMonomials(Op, VPs1, VPs2).
 
 %%      polyReduce(Poly, PolyReduced)
 %       True if PolyReduced represents the same monomials in Poly combining
@@ -294,7 +290,7 @@ degreeCompareMonomialsWithoutEqual(Op, m(_C1, TD1, VPs1), m(_C2, TD2, VPs2)) :-
 %       Two similar monomials can be compressed in one monomial whose
 %       coefficient is the sum of the two original coefficient.
 %       Note: this predicate assumes that Poly is sorted using
-%             degreeCompareMonomialsWithoutEqual/3.
+%             degreeCompareMonomials/3.
 
 polyReduce(poly([M]), poly([M])) :- !.
 
@@ -309,11 +305,11 @@ polyReduce(poly([M1, M2 | Monomials]), poly([M1 | ReducedM])) :-
 %%      as_polynomail(Expression, poly(Monomials))
 %       True if Monomials is the list that represent every monomial that
 %       appears in Expression, as in parse_polynomial/2, sorted using
-%       degreeCompareMonomialsWithoutEqual/3 and reduced with polyReduce/2.
+%       degreeCompareMonomials/3 and reduced with polyReduce/2.
 
 as_polynomial(Expression, poly(ReducedMonomials)) :-
     parse_polynomial(Expression, Monomials),
-    predsort(degreeCompareMonomialsWithoutEqual, Monomials, SortedMonomials),
+    predsort(degreeCompareMonomials, Monomials, SortedMonomials),
     polyReduce(poly(SortedMonomials), poly(ReducedMonomials)).
 
 %%      computevariableval(v(Power, Var), Variables, VariableValues, Value)
@@ -393,7 +389,7 @@ polysum(Poly1, m(C, TD, VPs), Result) :-
 
 polysum(poly(Monomials1), poly(Monomials2), poly(ResultMonomials)) :-
     append(Monomials1, Monomials2, Monomials3),
-    predsort(degreeCompareMonomialsWithoutEqual, Monomials3, SortedMonomials3),
+    predsort(degreeCompareMonomials, Monomials3, SortedMonomials3),
     polyReduce(poly(SortedMonomials3), poly(ResultMonomials)).
 
 %%      negateCoeff(Monomial, NegatedMonomial)
@@ -421,7 +417,7 @@ polyminus(Poly1, m(C, TD, VPs), Result) :-
 %       Two equal varpowers can be compressed in one varpower whose exponent
 %       is the sum of the two original exponents.
 %       Note: this predicate assumes that VPs is sorted using
-%             lexicographicallyCompareVPWithoutEqual/3.
+%             lexicographicallyCompareVP/3.
 
 varpowersReduce([v(Power, Var)], [v(Power, Var)]) :- !.
 
@@ -433,18 +429,6 @@ varpowersReduce([v(P1, Var), v(P2, Var) | VPs], ReducedVPs) :-
 varpowersReduce([VP1, VP2 | VPs], [VP1 | ReducedVPs]) :-
     varpowersReduce([VP2 | VPs], ReducedVPs).
 
-%%      lexicographicallyCompareVPWithoutEqual(Operator, v(_P1, Var1), v(_P2, Var2))
-%       True if Operator is '<' and Var1 comes before Var2 in a lex. order
-%         or if Operator is '>' and Var2 comes after Var2 in a lex. order
-
-lexicographicallyCompareVPWithoutEqual(<, v(_P1, Var1), v(_P2, Var2)) :-
-    Var1 @=< Var2,
-    !.
-
-lexicographicallyCompareVPWithoutEqual(>, v(_P1, Var1), v(_P2, Var2)) :-
-    Var1 @> Var2,
-    !.
-
 %%      monomialTimesMonomial(M1, M2, MResult)
 %       True if MResult is the monomial coming from the product of M1 times M2.
 %       The resulting monomial coefficient is the product of the coefficients,
@@ -453,7 +437,7 @@ lexicographicallyCompareVPWithoutEqual(>, v(_P1, Var1), v(_P2, Var2)) :-
 monomialTimesMonomial(m(C1, _TD1, VPs1), m(C2, _TD2, VPs2), m(C3, TD3, VPs3)) :-
     C3 is C1 * C2,
     append(VPs1, VPs2, VPs),
-    predsort(lexicographicallyCompareVPWithoutEqual, VPs, SortedVPs),
+    predsort(lexicographicallyCompareVP, VPs, SortedVPs),
     varpowersReduce(SortedVPs, VPs3),
     get_totaldegree(m(C3, TD3, VPs3)).
 
@@ -495,12 +479,12 @@ polytimes(poly([M | M1]), poly(M2), ReducedPoly) :-
     monomialTimesPoly(M, poly(M2), poly(FirstMonomials)),
     polytimes(poly(M1), poly(M2), poly(OtherMonomials)),
     append(FirstMonomials, OtherMonomials, Monomials),
-    predsort(degreeCompareMonomialsWithoutEqual, Monomials, SortedMonomials),
+    predsort(degreeCompareMonomials, Monomials, SortedMonomials),
     polyReduce(poly(SortedMonomials), ReducedPoly).
 
 %%      monomials(Poly, Monomials)
 %       True if Monomial is the list of monomials appearing in Poly sorted
-%       using degreeCompareMonomialsWithoutEqual/3.
+%       using degreeCompareMonomials/3.
 
 monomials(poly(Monomials), SortedMonomials) :-
-    predsort(degreeCompareMonomialsWithoutEqual, Monomials, SortedMonomials).
+    predsort(degreeCompareMonomials, Monomials, SortedMonomials).
