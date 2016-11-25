@@ -128,32 +128,32 @@ parse_monomial(E1 * E2, m(C, TD, VPs)) :-
     parse_monomial(E1, m(C, TD, OtherVPs)),
     append([VP], OtherVPs, VPs).
 
-%%      lexicographicallyCompare(Operator, v(_P1, Var1), v(_P2, Var2))
+%%      lexicographicallyCompareVP(Operator, v(_P1, Var1), v(_P2, Var2))
 %       True if Operator is '=' and Var1 equals Var2.
 %         or if Operator is '<' and Var1 comes before Var2 in a lex. order
 %         or if Operator is '>' and Var2 comes after Var2 in a lex. order
 
-lexicographicallyCompare(<, v(_P1, Var1), v(_P2, Var2)) :-
+lexicographicallyCompareVP(<, v(_P1, Var1), v(_P2, Var2)) :-
     Var1 @< Var2,
     !.
 
-lexicographicallyCompare(=, v(_P1, Var1), v(_P2, Var2)) :-
+lexicographicallyCompareVP(=, v(_P1, Var1), v(_P2, Var2)) :-
     Var1 = Var2,
     !.
 
-lexicographicallyCompare(>, v(_P1, Var1), v(_P2, Var2)) :-
+lexicographicallyCompareVP(>, v(_P1, Var1), v(_P2, Var2)) :-
     Var1 @> Var2,
     !.
 
 %%      as_monomial(Expression, m(C, TD, SortedVPs))
 %       True if m(C, TD, SortedVPs) is the monomial corresponding to
 %       Expression, with a coefficient C, a total degree TD, and SortedVPs
-%       is a list of VarPower sorted using lexicographicallyCompare/3.
+%       is a list of VarPower sorted using lexicographicallyCompareVP/3.
 
 as_monomial(Expression, m(C, TD, SortedVPs)) :-
     parse_monomial(Expression, m(C, _, VPs)),
     get_totaldegree(m(C, TD, VPs)),
-    predsort(lexicographicallyCompare, VPs, SortedVPs).
+    predsort(lexicographicallyCompareVP, VPs, SortedVPs).
 
 %%      coefficients(Polynomial, Coefficients)
 %       True if Coefficients is a list where the i-th element is the
@@ -211,3 +211,143 @@ mindegree(poly([m(_C, TD, _VPs)]), TD) :- !.
 mindegree(poly([m(_C, FirstMonomialDegree, _VPs) | Monomials]), MinDegree) :-
     mindegree(poly(Monomials), Degree),
     MinDegree is min(FirstMonomialDegree, Degree).
+
+%%      parse_polynomial(Expression, Monomials)
+%       True if Expression is in the form E1 Op E2 Op ... Op En, where for
+%       each Ei (i ranges from 1 to n) as_monomial(Ei, _) is true and Op is
+%       + or -. If Op is -, the following monomial is parsed as usual but its
+%       coefficient is considered negated.
+%       Monomials is then a list [M1, M2, ..., Mn] where each Mi is the result
+%       of the parsing of Ei.
+
+parse_polynomial(M, [ParsedM]) :-
+    as_monomial(M, ParsedM).
+
+parse_polynomial(-M, [m(NegCoeff, TD, VPs)]) :-
+    as_monomial(M, m(Coeff, TD, VPs)),
+    NegCoeff is -Coeff.
+
+parse_polynomial(Monomials + M, [ParsedM | ParsedMonomials]) :-
+    as_monomial(M, ParsedM),
+    parse_polynomial(Monomials, ParsedMonomials).
+
+parse_polynomial(Monomials - M, [m(NegCoeff, TD, VPs) | ParsedMonomials]) :-
+    as_monomial(M, m(Coeff, TD, VPs)),
+    NegCoeff is -Coeff,
+    parse_polynomial(Monomials, ParsedMonomials).
+
+%%      lexicographicallyCompareMonomials(Operator, VPs1, VPs2)
+%       True if Operator is '<' and lexicographicallyCompareVP/3 applied to
+%       the first elements of each list is true with Op = '<'.
+%       True if Operator is '>' and lexicographicallyCompareVP/3 applied to
+%       the first elements of each list is true with Op = '<'.
+%       Otherwise, if the first VPs are equal, get rid of them and consider
+%       the following ones, repeating the comparison.
+
+
+lexicographicallyCompareMonomials(<, [], [_VP2 | _VPs2]) :- !.
+
+lexicographicallyCompareMonomials(>, [_VP1 | _VPs1], []) :- !.
+
+lexicographicallyCompareMonomials(< , [VP1 | _VPs1], [VP2 | _VPs2]) :-
+    lexicographicallyCompareVP(<, VP1, VP2),
+    !.
+
+lexicographicallyCompareMonomials(> , [VP1 | _VPs1], [VP2 | _VPs2]) :-
+    lexicographicallyCompareVP(>, VP1, VP2),
+    !.
+
+lexicographicallyCompareMonomials(Op , [VP1 | VPs1], [VP2 | VPs2]) :-
+    lexicographicallyCompareVP(=, VP1, VP2),
+    lexicographicallyCompareMonomials(Op, VPs1, VPs2).
+
+%%      degreeCompareVP(Operator, M1, M2)
+%       True if Operator is '<' and monomial M1 has a total degree greater
+%                                   than total degree of monomial M2.
+%         or if Operator is '>' and monomial M1 has a total degree less
+%                                   than total degree of monomial M2.
+%       When total degrees are equal, Operator is the Operator resulting from
+%       lexicographicallyCompareMonomials/3.
+
+degreeCompareMonomials(<, m(_C1, TD1, _VPs1), m(_C2, TD2, _VPs2)) :-
+    TD1 > TD2,
+    !.
+
+degreeCompareMonomials(>, m(_C1, TD1, _VPs1), m(_C2, TD2, _VPs2)) :-
+    TD1 < TD2,
+    !.
+
+degreeCompareMonomials(Op, m(_C1, TD1, VPs1), m(_C2, TD2, VPs2)) :-
+    TD1 = TD2,
+    lexicographicallyCompareMonomials(Op, VPs1, VPs2).
+
+%%      as_polynomail(Expression, poly(Monomials))
+%       True if Monomials is the list that represent every monomial that
+%       appears in Expression, as in parse_polynomial/2, and it is sorted
+%       using degreeCompareMonomials/3.
+
+as_polynomial(Expression, poly(SortedMonomials)) :-
+    parse_polynomial(Expression, Monomials),
+    predsort(degreeCompareMonomials, Monomials, SortedMonomials).
+
+%%      computevariableval(v(Power, Var), Variables, VariableValues, Value)
+%       Find the Index of Var in list Variables, then gets the corresponding
+%       VariableValue in VariableValues at the same position (using that
+%       Index).
+%       True if Value is VariableValue (as defined above) raised to the
+%       Power-th power.
+
+computevariableval(v(Power, Var), Variables, VariableValues, Value) :-
+    nth0(Index, Variables, Var),
+    !,
+    nth0(Index, VariableValues, VariableValue),
+    Value is VariableValue ** Power.
+
+%%      computevariableval(VPs, Variables, VariableValues, Value)
+%       True if Value is the product of all values of variables in VPs,
+%       calculated using computevariableval/4.
+
+computevariablesval([VP], Variables, VariableValues, Value) :-
+    computevariableval(VP, Variables, VariableValues, Value),
+    !.
+
+computevariablesval([VP | VPs], Variables, VariableValues, TotalValue) :-
+    computevariableval(VP, Variables, VariableValues, Value1),
+    computevariablesval(VPs, Variables, VariableValues, Value2),
+    TotalValue is Value1 * Value2.
+
+%%      computemonomialval(m(Coeff, _TD, VPs), Variables, VariableValues, Value)
+%       True if Value is the product between Coeff and the value of all VPs,
+%       calculated using computevariablesval/4.
+
+computemonomialval(m(C, _TD, VPs), Variables, VariableValues, TotalValue) :-
+    computevariablesval(VPs, Variables, VariableValues, VariableValue),
+    TotalValue is C * VariableValue.
+
+%%      computepolyval(Monomials, Variables, VariableValues, Value)
+%       True if Value is the *sum* of values of every monomial in Monomials,
+%       calculated using computemonomialval/4.
+
+computepolyval([M], Variables, VariableValues, Value) :-
+    computemonomialval(M, Variables, VariableValues, Value),
+    !.
+
+computepolyval([M | Monomials], Variables, VariableValues, TotalValue) :-
+    computemonomialval(M, Variables, VariableValues, Value1),
+    computepolyval(Monomials, Variables, VariableValues, Value2),
+    TotalValue is Value1 + Value2.
+
+%%      polyval(Polynomial, VariableValues, Value)
+%       True if Value is the value of the polynomial Polynomial in the
+%       n-dimensional point represented by the list VariableValues. The i-th
+%       value in VariableValues matches with the i-th variable resulting from
+%       variables/2.
+
+polyval(poly(Monomials), VariableValues, Value) :-
+    !,
+    variables(poly(Monomials), Variables),
+    computepolyval(Monomials, Variables, VariableValues, Value).
+
+polyval(Expression, VariableValues, Value) :-
+    as_polynomial(Expression, Poly),
+    polyval(Poly, VariableValues, Value).

@@ -4,7 +4,7 @@ echo '<testsuite tests="'$lines'">' > report.xml
 i=1
 while read test
 do
-	if [ "$test" != "" ]; then
+	if [[ "$test" != "" ]] && [[ "$test" != %* ]]; then
 		res=`echo "$test" | swipl -q -s mvpoli.pl`
 		if [ "$res" != "false." ]; then
                 	echo '<testcase classname="test'$i'" name="test'$i'"/>' >> report.xml
