@@ -497,3 +497,10 @@ polytimes(poly([M | M1]), poly(M2), ReducedPoly) :-
     append(FirstMonomials, OtherMonomials, Monomials),
     predsort(degreeCompareMonomialsWithoutEqual, Monomials, SortedMonomials),
     polyReduce(poly(SortedMonomials), ReducedPoly).
+
+%%      monomials(Poly, Monomials)
+%       True if Monomial is the list of monomials appearing in Poly sorted
+%       using degreeCompareMonomialsWithoutEqual/3.
+
+monomials(poly(Monomials), SortedMonomials) :-
+    predsort(degreeCompareMonomialsWithoutEqual, Monomials, SortedMonomials).
