@@ -158,12 +158,19 @@ as_monomial(Expression, m(C, TD, SortedVPs)) :-
 
 %%      coefficients(Polynomial, Coefficients)
 %       True if Coefficients is a list where the i-th element is the
-%       coefficient of the i-th monomial of Polynomial.
+%       coefficient of the i-th monomial of Polynomial. Polynomial can also
+%       be a single monomial.
 
 coefficients(poly([]), []) :- !.
 
 coefficients(poly([m(C, _TD, _VPs) | Monomials]), [C | Coefficients]) :-
+    !,
     coefficients(poly(Monomials), Coefficients).
+
+coefficients(Monomial, Coefficients) :-
+    is_monomial(Monomial),
+    !,
+    coefficients(poly([Monomial]), Coefficients).
 
 %%      m_variables(Monomial, Variables)
 %       True if Variables is the list containing every variable that
@@ -189,14 +196,22 @@ p_variables([M | Monomials], Vars) :-
 
 %%      variables(Poly, Variables)
 %       True if Variables is a list of variables appearing in every monomial
-%       in Poly, it is sorted and does not contain duplicates.
+%       in Poly, it is sorted and does not contain duplicates. Poly can also
+%       be a single monomial.
 
 variables(poly(Monomials), SortedVars) :-
     p_variables(Monomials, Vars),
+    !,
     sort(Vars, SortedVars).
 
+variables(Monomial, Variables) :-
+    is_monomial(Monomial),
+    !,
+    variables(poly([Monomial]), Variables).
+
 %%      maxdegree(Poly, Degree)
-%       True if Degree is the maximum degree of the monomials in Poly.
+%       True if Degree is the maximum degree of the monomials in Poly. When
+%       Poly is a single monomial, Degree is the degree of that monomial.
 
 maxdegree(poly([m(_C, TD, _VPs)]), TD) :- !.
 
@@ -204,14 +219,21 @@ maxdegree(poly([m(_C, FirstMonomialDegree, _VPs) | Monomials]), MaxDegree) :-
     maxdegree(poly(Monomials), Degree),
     MaxDegree is max(FirstMonomialDegree, Degree).
 
+maxdegree(m(C, TD, VPs), TD) :-
+    is_monomial(m(C, TD, VPs)).
+
 %%      mindegree(Poly, Degree)
-%       True if Degree is the minimum degree of the monomials in Poly.
+%       True if Degree is the minimum degree of the monomials in Poly. When
+%       Poly is a single monomial, Degree is the degree of that monomial.
 
 mindegree(poly([m(_C, TD, _VPs)]), TD) :- !.
 
 mindegree(poly([m(_C, FirstMonomialDegree, _VPs) | Monomials]), MinDegree) :-
     mindegree(poly(Monomials), Degree),
     MinDegree is min(FirstMonomialDegree, Degree).
+
+mindegree(m(C, TD, VPs), TD) :-
+    is_monomial(m(C, TD, VPs)).
 
 %%      parse_polynomial(Expression, Monomials)
 %       True if Expression is in the form E1 Op E2 Op ... Op En, where for
