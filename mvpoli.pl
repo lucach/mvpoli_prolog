@@ -364,11 +364,18 @@ computepolyval([M | Monomials], Variables, VariableValues, TotalValue) :-
 %       n-dimensional point represented by the list VariableValues. The i-th
 %       value in VariableValues matches with the i-th variable resulting from
 %       variables/2.
+%       Polynomial can also be a monomial or an Expression, which is parsed
+%       with as_polynomial/2.
 
 polyval(poly(Monomials), VariableValues, Value) :-
     !,
     variables(poly(Monomials), Variables),
     computepolyval(Monomials, Variables, VariableValues, Value).
+
+polyval(Monomial, VariableValues, Value) :-
+	is_monomial(Monomial),
+	!,
+	polyval(poly([Monomial]), VariableValues, Value).
 
 polyval(Expression, VariableValues, Value) :-
     as_polynomial(Expression, Poly),

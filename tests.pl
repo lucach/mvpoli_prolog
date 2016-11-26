@@ -28,6 +28,7 @@ as_polynomial(-1 * x + x * y, poly([m(1, 2, [v(1, x), v(1, y)]), m(-1, 1, [v(1, 
 
 polyval(x^2 * y, [2, 2], 8).
 polyval(x^2 * y + 3 * x, [2, 2], 14).
+polyval(m(1, 2, [v(2, a)]), [3], 9).
 
 %%%% polysum
 
