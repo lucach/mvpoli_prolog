@@ -134,8 +134,8 @@ parse_monomial(E1 * E2, m(C, TD, VPs)) :-
     append([VP], OtherVPs, VPs).
 
 %%      lexicographicallyCompareVP(Operator, v(_P1, Var1), v(_P2, Var2))
-%       True if Operator is '=' and Var1 equals Var2.
-%         or if Operator is '<' and Var1 comes before Var2 in a lex. order
+%       True if Operator is '<' and Var1 comes before (or it is equal to)
+%               Var2 in a lex. order
 %         or if Operator is '>' and Var2 comes after Var2 in a lex. order
 
 lexicographicallyCompareVP(<, v(_P1, Var1), v(_P2, Var2)) :-
@@ -347,7 +347,7 @@ computevariableval(v(Power, Var), Variables, VariableValues, Value) :-
     nth0(Index, VariableValues, VariableValue),
     Value is VariableValue ** Power.
 
-%%      computevariableval(VPs, Variables, VariableValues, Value)
+%%      computevariablesval(VPs, Variables, VariableValues, Value)
 %       True if Value is the product of all values of variables in VPs,
 %       calculated using computevariableval/4.
 
