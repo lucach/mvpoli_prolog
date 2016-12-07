@@ -2,11 +2,12 @@
 
 %%%% 806976 Chiodini Luca
 
-%%      is_monomial(m(_C, TD, VPs)
-%       True if m(C, TD, VPs) is a monomial with a positive total degree
-%       and VPs is a list of .
+%%      is_monomial(m(C, TD, VPs)
+%       True if m(C, TD, VPs) is a monomial with a numeric coefficient C,
+%       a non-negative total degree TD and VPs is a list of varpowers.
 
 is_monomial(m(_C, TD, VPs)) :-
+    numeric(C),
     is_list(VPs),
     foreach(member(VP, VPs), is_varpower(VP)),
     integer(TD),
@@ -120,11 +121,11 @@ parse_varpower(Variable^Power, v(Power, Variable)) :-
 %%      parse_monomial(Expression, m(C, _, VPs))
 %       True if Expression is in the form E1 * E2 * ... * En, where for
 %       each Ei (i ranges from 1 to n) parse_varpower(Ei, _) is true.
-%       If the first expression is an integer, that number is C. Otherwise,
-%       C defaults to 1.
+%       If the first expression is a computable expression, the number
+%       resulting from that computation is C. Otherwise, C defaults to 1.
 
-parse_monomial(Coefficient, m(Coefficient, _TD, [])) :-
-    integer(Coefficient),
+parse_monomial(Expression, m(Coefficient, _TD, [])) :-
+    arithmetic_expression_value(Expression, Coefficient),
     !.
 
 parse_monomial(Expression, m(1, _TD, [VP])) :-
