@@ -14,10 +14,15 @@ coefficients(poly([m(-4, 0, []), m(1, 2, [v(1, x), v(1, y)]), m(1, 7, [v(3, s), 
 variables(poly([m(-1, 1, [v(1, x)]), m(1, 2, [v(1, x), v(1, y)])]), [x, y]).
 variables(poly([m(5, 2, [v(1, y), v(1, z)]), m(4, 3, [v(2, x), v(1, y)]), m(4, 4, [v(1, r), v(3, w)])]), [r, w, x, y, z]).
 
-%%%% min-maxdegree
+%%%% maxdegree
 
 maxdegree(poly([m(5, 2, [v(1, y), v(1, z)]), m(4, 3, [v(2, x), v(1, y)]), m(4, 4, [v(1, r), v(3, w)])]), 4).
+maxdegree(poly([]), 0).
+
+%%%% mindegree
+
 mindegree(poly([m(5, 2, [v(1, y), v(1, z)]), m(4, 3, [v(2, x), v(1, y)]), m(4, 4, [v(1, r), v(3, w)])]), 2).
+mindegree(poly([]), 0).
 
 %%%% as_polynomial
 

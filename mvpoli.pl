@@ -233,7 +233,7 @@ variables(Monomial, Variables) :-
 %       True if Degree is the maximum degree of the monomials in Poly. When
 %       Poly is a single monomial, Degree is the degree of that monomial.
 
-maxdegree(poly([m(_C, TD, _VPs)]), TD) :- !.
+maxdegree(poly([]), 0) :- !.
 
 maxdegree(poly([m(_C, FirstMonomialDegree, _VPs) | Monomials]), MaxDegree) :-
     maxdegree(poly(Monomials), Degree),
@@ -246,7 +246,7 @@ maxdegree(m(C, TD, VPs), TD) :-
 %       True if Degree is the minimum degree of the monomials in Poly. When
 %       Poly is a single monomial, Degree is the degree of that monomial.
 
-mindegree(poly([m(_C, TD, _VPs)]), TD) :- !.
+mindegree(poly([]), 0) :- !.
 
 mindegree(poly([m(_C, FirstMonomialDegree, _VPs) | Monomials]), MinDegree) :-
     mindegree(poly(Monomials), Degree),
