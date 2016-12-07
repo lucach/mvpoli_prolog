@@ -285,19 +285,19 @@ lexicographicallyCompareMonomials(Op , [VP1 | VPs1], [VP2 | VPs2]) :-
 
 
 %%      degreeCompareMonomials(Operator, M1, M2)
-%       True if Operator is '<' and monomial M1 has a total degree greater
+%       True if Operator is '<' and monomial M1 has a total degree less
 %                                   than total degree of monomial M2.
-%         or if Operator is '>' and monomial M1 has a total degree less
+%         or if Operator is '>' and monomial M1 has a total degree greater
 %                                   than total degree of monomial M2.
 %       When total degrees are equal, Operator is the Operator resulting from
 %       lexicographicallyCompareMonomials/3.
 
 degreeCompareMonomials(<, m(_C1, TD1, _VPs1), m(_C2, TD2, _VPs2)) :-
-    TD1 > TD2,
+    TD1 < TD2,
     !.
 
 degreeCompareMonomials(>, m(_C1, TD1, _VPs1), m(_C2, TD2, _VPs2)) :-
-    TD1 < TD2,
+    TD1 > TD2,
     !.
 
 degreeCompareMonomials(Op, m(_C1, TD1, VPs1), m(_C2, TD2, VPs2)) :-
