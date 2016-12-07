@@ -133,18 +133,38 @@ parse_monomial(E1 * E2, m(C, TD, VPs)) :-
     parse_monomial(E1, m(C, TD, OtherVPs)),
     append([VP], OtherVPs, VPs).
 
+%%      exponentCompareVP(Operator, v(Exp1, _Var1), v(Exp2, _Var2))
+%       True if Operator is '<' and Exp1 is less than (or equal to) Exp2
+%         or if Operator is '>' and Exp1 is greater than Exp2.
+
+exponentCompareVP(<, v(Exp1, _Var1), v(Exp2, _Var2)) :-
+    Exp1 =< Exp2,
+    !.
+
+exponentCompareVP(>, v(Exp1, _Var1), v(Exp2, _Var2)) :-
+    Exp1 > Exp2,
+    !.
+
+
 %%      lexicographicallyCompareVP(Operator, v(_P1, Var1), v(_P2, Var2))
-%       True if Operator is '<' and Var1 comes before (or it is equal to)
-%               Var2 in a lex. order
+%       True if Operator is '<' and Var1 comes before Var2 in a lex. order
 %         or if Operator is '>' and Var2 comes after Var2 in a lex. order
+%       When Var1 and Var2 are equal, Operator is the Operator resulting from
+%       exponentCompareVP/3.
+
 
 lexicographicallyCompareVP(<, v(_P1, Var1), v(_P2, Var2)) :-
-    Var1 @=< Var2,
+    Var1 @< Var2,
     !.
 
 lexicographicallyCompareVP(>, v(_P1, Var1), v(_P2, Var2)) :-
     Var1 @> Var2,
     !.
+
+lexicographicallyCompareVP(Op, v(Exp1, Var1), v(Exp2, Var2)) :-
+    Var1 = Var2,
+    !,
+    exponentCompareVP(Op, v(Exp1, Var1), v(Exp2, Var2)).
 
 %%      as_monomial(Expression, m(C, TD, SortedVPs))
 %       True if m(C, TD, SortedVPs) is the monomial corresponding to
