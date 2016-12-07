@@ -4,12 +4,14 @@
 
 %%      is_monomial(m(_C, TD, VPs)
 %       True if m(C, TD, VPs) is a monomial with a positive total degree
-%       and VPs is a list.
+%       and VPs is a list of .
 
 is_monomial(m(_C, TD, VPs)) :-
+    is_list(VPs),
+    foreach(member(VP, VPs), is_varpower(VP)),
     integer(TD),
     TD >= 0,
-    is_list(VPs).
+    get_totaldegree(m(_, TD, VPs)).
 
 %%      is_varpower(v(Power, VarSymbol))
 %       True if v(Power, VarSymbol) is a power of a variable, i.e. Power is
