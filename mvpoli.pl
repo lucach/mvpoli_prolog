@@ -237,6 +237,8 @@ variables(Monomial, Variables) :-
 
 maxdegree(poly([]), 0) :- !.
 
+maxdegree(poly([m(_C, TD, _VPs)]), TD) :- !.
+
 maxdegree(poly([m(_C, FirstMonomialDegree, _VPs) | Monomials]), MaxDegree) :-
     maxdegree(poly(Monomials), Degree),
     MaxDegree is max(FirstMonomialDegree, Degree).
@@ -249,6 +251,8 @@ maxdegree(m(C, TD, VPs), TD) :-
 %       Poly is a single monomial, Degree is the degree of that monomial.
 
 mindegree(poly([]), 0) :- !.
+
+mindegree(poly([m(_C, TD, _VPs)]), TD) :- !.
 
 mindegree(poly([m(_C, FirstMonomialDegree, _VPs) | Monomials]), MinDegree) :-
     mindegree(poly(Monomials), Degree),
@@ -335,8 +339,16 @@ degreeCompareMonomials(Op, m(_C1, TD1, VPs1), m(_C2, TD2, VPs2)) :-
 %       coefficient is the sum of the two original coefficient.
 %       Note: this predicate assumes that Poly is sorted using
 %             degreeCompareMonomials/3.
+%       Moreover, the list PolyReduced cannot cointain monomials whose
+%       coefficient is zero.
 
-polyReduce(poly([M]), poly([M])) :- !.
+polyReduce(poly([m(C, _TD, _VPs)]), poly([])) :-
+    C = 0,
+    !.
+
+polyReduce(poly([m(C, TD, VPs)]), poly([m(C, TD, VPs)])) :-
+    C \= 0,
+    !.
 
 polyReduce(poly([m(C1, TD, VP), m(C2, TD, VP) | Monomials]), poly(ReducedM)) :-
     !,
