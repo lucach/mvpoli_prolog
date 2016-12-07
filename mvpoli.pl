@@ -342,9 +342,7 @@ degreeCompareMonomials(Op, m(_C1, TD1, VPs1), m(_C2, TD2, VPs2)) :-
 %       Moreover, the list PolyReduced cannot cointain monomials whose
 %       coefficient is zero.
 
-polyReduce(poly([m(C, _TD, _VPs)]), poly([])) :-
-    C = 0,
-    !.
+polyReduce(poly([m(0, _TD, _VPs)]), poly([])) :- !.
 
 polyReduce(poly([m(C, TD, VPs)]), poly([m(C, TD, VPs)])) :-
     C \= 0,
@@ -355,7 +353,13 @@ polyReduce(poly([m(C1, TD, VP), m(C2, TD, VP) | Monomials]), poly(ReducedM)) :-
     C3 is C1 + C2,
     polyReduce(poly([m(C3, TD, VP) | Monomials]), poly(ReducedM)).
 
-polyReduce(poly([M1, M2 | Monomials]), poly([M1 | ReducedM])) :-
+polyReduce(poly([m(0, _TD1, _VPs1), M2 | Monomials]), poly(ReducedM)) :-
+    !,
+    polyReduce(poly([M2 | Monomials]), poly(ReducedM)).
+
+polyReduce(poly([m(C1, TD1, VPs1), M2 | Monomials]), poly([m(C1, TD1, VPs1) | ReducedM])) :-
+    C1 \= 0,
+    !,
     polyReduce(poly([M2 | Monomials]), poly(ReducedM)).
 
 %%      as_polynomail(Expression, poly(Monomials))

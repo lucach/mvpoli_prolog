@@ -31,6 +31,7 @@ as_polynomial(y * s^3 * t^3 - 4 + x * y, poly([m(-4, 0, []), m(1, 2, [v(1, x), v
 as_polynomial(-1 * x + x * y, poly([m(-1, 1, [v(1, x)]), m(1, 2, [v(1, x), v(1, y)])])).
 as_polynomial(x * y^2 + x^2 * y, poly([m(1, 3, [v(1, x), v(2, y)]), m(1, 3, [v(2, x), v(1, y)])])).
 as_polynomial(a*c+a^2+a*b+a, poly([m(1, 1, [v(1, a)]), m(1, 2, [v(1, a), v(1, b)]), m(1, 2, [v(1, a), v(1, c)]), m(1, 2, [v(2, a)])])).
+as_polynomial(0*a+x, poly([m(1, 1, [v(1, x)])])).
 
 %%%% polyval
 
