@@ -137,17 +137,21 @@ parse_monomial(E1 * E2, m(C, TD, VPs)) :-
     append([VP], OtherVPs, VPs).
 
 %%      exponentCompareVP(Operator, v(Exp1, _Var1), v(Exp2, _Var2))
-%       True if Operator is '<' and Exp1 is less than (or equal to) Exp2
-%         or if Operator is '>' and Exp1 is greater than Exp2.
+%       True if Operator is '<' and Exp1 is less than Exp2
+%         or if Operator is '>' and Exp1 is greater than Exp2
+%         or if Operator is '=' and Exp1 is equal to Exp2.
 
 exponentCompareVP(<, v(Exp1, _Var1), v(Exp2, _Var2)) :-
-    Exp1 =< Exp2,
+    Exp1 < Exp2,
     !.
 
 exponentCompareVP(>, v(Exp1, _Var1), v(Exp2, _Var2)) :-
     Exp1 > Exp2,
     !.
 
+exponentCompareVP(>, v(Exp1, _Var1), v(Exp2, _Var2)) :-
+    Exp1 = Exp2,
+    !.
 
 %%      lexicographicallyCompareVP(Operator, v(_P1, Var1), v(_P2, Var2))
 %       True if Operator is '<' and Var1 comes before Var2 in a lex. order
