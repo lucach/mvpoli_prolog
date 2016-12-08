@@ -149,7 +149,7 @@ exponentCompareVP(>, v(Exp1, _Var1), v(Exp2, _Var2)) :-
     Exp1 > Exp2,
     !.
 
-exponentCompareVP(>, v(Exp1, _Var1), v(Exp2, _Var2)) :-
+exponentCompareVP(=, v(Exp1, _Var1), v(Exp2, _Var2)) :-
     Exp1 = Exp2,
     !.
 
