@@ -6,8 +6,8 @@
 %       True if m(C, TD, VPs) is a monomial with a numeric coefficient C,
 %       a non-negative total degree TD and VPs is a list of varpowers.
 
-is_monomial(m(_C, TD, VPs)) :-
-    numeric(C),
+is_monomial(m(C, TD, VPs)) :-
+    number(C),
     is_list(VPs),
     foreach(member(VP, VPs), is_varpower(VP)),
     integer(TD),
