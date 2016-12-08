@@ -173,6 +173,29 @@ lexicographicallyCompareVP(Op, v(Exp1, Var1), v(Exp2, Var2)) :-
     !,
     exponentCompareVP(Op, v(Exp1, Var1), v(Exp2, Var2)).
 
+%%      lexicographicallyCompareVPWithoutEqual(Operator, VP1, VP2)
+%       True if Operator is '<' and
+%                   lexicographicallyCompareVP(<, VP1, VP2) or
+%                   lexicographicallyCompareVP(=, VP1, VP2) are true;
+%         or if Operator is '>' and lexicographicallyCompareVP(>, VP1, VP2)
+%            is true.
+%       In other words, this predicate behaves like lexicographicallyCompareVP
+%       but "groups" the case when the varpowers are the same (i.e., same
+%       variable and same exponent) with the case when VP1 comes before VP2.
+%       This is needed to avoid predsort removing similar monomials.
+
+lexicographicallyCompareVPWithoutEqual(<, VP1, VP2) :-
+    lexicographicallyCompareVP(<, VP1, VP2),
+    !.
+
+lexicographicallyCompareVPWithoutEqual(<, VP1, VP2) :-
+    lexicographicallyCompareVP(=, VP1, VP2),
+    !.
+
+lexicographicallyCompareVPWithoutEqual(>, VP1, VP2) :-
+    lexicographicallyCompareVP(>, VP1, VP2),
+    !.
+
 %%      as_monomial(Expression, m(C, TD, SortedVPs))
 %       True if m(C, TD, SortedVPs) is the monomial corresponding to
 %       Expression, with a coefficient C, a total degree TD, and SortedVPs
@@ -509,7 +532,7 @@ varpowersReduce([VP1, VP2 | VPs], [VP1 | ReducedVPs]) :-
 monomialTimesMonomial(m(C1, _TD1, VPs1), m(C2, _TD2, VPs2), m(C3, TD3, VPs3)) :-
     C3 is C1 * C2,
     append(VPs1, VPs2, VPs),
-    predsort(lexicographicallyCompareVP, VPs, SortedVPs),
+    predsort(lexicographicallyCompareVPWithoutEqual, VPs, SortedVPs),
     varpowersReduce(SortedVPs, VPs3),
     get_totaldegree(m(C3, TD3, VPs3)).
 
