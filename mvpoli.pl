@@ -539,7 +539,7 @@ monomialTimesMonomial(m(C1, _TD1, VPs1), m(C2, _TD2, VPs2), m(C3, TD3, VPs3)) :-
 %%      monomialTimesPoly(Monomial, Poly, PolyResult)
 %       True if PolyResult is the polynomial coming from the product of
 %       Monomial times Poly.
-%       The resulting monomial is the sum of Monomial times each monomial in
+%       The resulting polynomial is the sum of Monomial times each monomial in
 %       Poly.
 
 monomialTimesPoly(_, poly([]), poly([])) :- !.
