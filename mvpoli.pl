@@ -470,19 +470,19 @@ polyval(Expression, VariableValues, Value) :-
     polyval(Poly, VariableValues, Value).
 
 
-%%      polysum(Poly1, Poly2, Result)
+%%      polyplus(Poly1, Poly2, Result)
 %       True if Result is the polynomial sum of Poly1 and Poly2. Note that
 %       Poly1 and Poly2 can also be monomials.
 
-polysum(m(C, TD, VPs), Poly2, Result) :-
-    polysum(poly([m(C, TD, VPs)]), Poly2, Result),
+polyplus(m(C, TD, VPs), Poly2, Result) :-
+    polyplus(poly([m(C, TD, VPs)]), Poly2, Result),
     !.
 
-polysum(Poly1, m(C, TD, VPs), Result) :-
-    polysum(Poly1, poly([m(C, TD, VPs)]), Result),
+polyplus(Poly1, m(C, TD, VPs), Result) :-
+    polyplus(Poly1, poly([m(C, TD, VPs)]), Result),
     !.
 
-polysum(poly(Monomials1), poly(Monomials2), poly(ResultMonomials)) :-
+polyplus(poly(Monomials1), poly(Monomials2), poly(ResultMonomials)) :-
     append(Monomials1, Monomials2, Monomials3),
     predsort(degreeCompareMonomials, Monomials3, SortedMonomials3),
     polyReduce(poly(SortedMonomials3), poly(ResultMonomials)).
@@ -499,11 +499,11 @@ negateCoeff(m(Coeff, TD, VPs), m(NegCoeff, TD, VPs)) :-
 
 polyminus(Poly1, poly(Monomials2), Result) :-
     maplist(negateCoeff, Monomials2, NegMonomials2),
-    polysum(Poly1, poly(NegMonomials2), Result).
+    polyplus(Poly1, poly(NegMonomials2), Result).
 
 polyminus(Poly1, m(C, TD, VPs), Result) :-
     negateCoeff(m(C, TD, VPs), m(NegCoeff, TD, VPs)),
-    polysum(Poly1, poly([m(NegCoeff, TD, VPs)]), Result).
+    polyplus(Poly1, poly([m(NegCoeff, TD, VPs)]), Result).
 
 %%      varpowersReduce(VPs, ReducedVPs)
 %       True if ReducedVPs represents the same varpowers in VPs combining

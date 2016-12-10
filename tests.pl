@@ -41,10 +41,10 @@ polyval(x^2 * y, [2, 2], 8).
 polyval(x^2 * y + 3 * x, [2, 2], 14).
 polyval(m(1, 2, [v(2, a)]), [3], 9).
 
-%%%% polysum
+%%%% polyplus
 
-polysum(m(2, 1, [v(1, a)]), m(3, 1, [v(1, a)]), poly([m(5, 1, [v(1, a)])])).
-polysum(m(3, 1, [v(1, a)]), m(-3, 1, [v(1, a)]), poly([])).
+polyplus(m(2, 1, [v(1, a)]), m(3, 1, [v(1, a)]), poly([m(5, 1, [v(1, a)])])).
+polyplus(m(3, 1, [v(1, a)]), m(-3, 1, [v(1, a)]), poly([])).
 
 %%%% polyminus
 
