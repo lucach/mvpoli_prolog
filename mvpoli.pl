@@ -201,10 +201,12 @@ lexicographicallyCompareVPWithoutEqual(>, VP1, VP2) :-
 %       Expression, with a coefficient C, a total degree TD, and SortedVPs
 %       is a list of VarPower sorted using lexicographicallyCompareVP/3.
 
-as_monomial(Expression, m(C, TD, SortedVPs)) :-
+as_monomial(Expression, m(C, TD, ReducedVPs)) :-
     parse_monomial(Expression, m(C, _, VPs)),
     get_totaldegree(m(C, TD, VPs)),
-    predsort(lexicographicallyCompareVP, VPs, SortedVPs).
+    varpowersRemoveZeroExp(VPs, VPsWithoutZeroExp),
+    predsort(lexicographicallyCompareVPWithoutEqual, VPsWithoutZeroExp, SortedVPs),
+    varpowersReduce(SortedVPs, ReducedVPs).
 
 %%      coefficients(Polynomial, Coefficients)
 %       True if Coefficients is a list where the i-th element is the
@@ -357,6 +359,21 @@ degreeCompareMonomials(>, m(_C1, TD1, _VPs1), m(_C2, TD2, _VPs2)) :-
 degreeCompareMonomials(Op, m(_C1, TD1, VPs1), m(_C2, TD2, VPs2)) :-
     TD1 = TD2,
     lexicographicallyCompareMonomials(Op, VPs1, VPs2).
+
+%%      varpowersRemoveZeroExp(VPs, VPsWithoutZeroExp)
+%       True if VPsWithoutZeroExp is the same list of VPs without those
+%       with a zero exponent, which are stripped.
+
+varpowersRemoveZeroExp([], []) :- !.
+
+varpowersRemoveZeroExp([v(0, _Var) | VPs], VPsWithoutZeroExp) :-
+    !,
+    varpowersRemoveZeroExp(VPs, VPsWithoutZeroExp).
+
+varpowersRemoveZeroExp([v(Exp, Var) | VPs], [v(Exp, Var) | VPsWithoutZeroExp]) :-
+    Exp \= 0,
+    !,
+    varpowersRemoveZeroExp(VPs, VPsWithoutZeroExp).
 
 %%      polyReduce(Poly, PolyReduced)
 %       True if PolyReduced represents the same monomials in Poly combining
@@ -513,6 +530,8 @@ polyminus(Poly1, m(C, TD, VPs), Result) :-
 %       is the sum of the two original exponents.
 %       Note: this predicate assumes that VPs is sorted using
 %             lexicographicallyCompareVP/3.
+
+varpowersReduce([], []) :- !.
 
 varpowersReduce([v(Power, Var)], [v(Power, Var)]) :- !.
 

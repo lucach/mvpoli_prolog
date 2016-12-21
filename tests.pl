@@ -4,6 +4,9 @@ as_monomial(3 * y * w * t^3, m(3, 5, [v(3, t), v(1, w), v(1, y)])).
 as_monomial(y * s^3 * t^3, m(1, 7, [v(3, s), v(3, t), v(1, y)])).
 as_monomial(42, m(42, 0, [])).
 as_monomial(2*cos(0)*x, m(2.0, 1, [v(1, x)])).
+as_monomial(x^0, m(1, 0, [])).
+as_monomial(x^3 * y^0 * z^2, m(1, 5, [v(3, x), v(2, z)])).
+as_monomial(a^2 * a^2, m(1, 4, [v(4, a)])).
 
 %%%% coefficients
 
