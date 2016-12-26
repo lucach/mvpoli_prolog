@@ -1,5 +1,3 @@
-%%%% -*- Mode: Prolog -*-
-
 %%%% 806976 Chiodini Luca
 
 %%      is_monomial(m(C, TD, VPs)
@@ -17,7 +15,6 @@ is_monomial(m(C, TD, VPs)) :-
 %%      is_varpower(v(Power, VarSymbol))
 %       True if v(Power, VarSymbol) is a power of a variable, i.e. Power is
 %       a non-negative integer and VarSymbol is an atom.
-
 
 is_varpower(v(Power, VarSymbol)) :-
     integer(Power),
