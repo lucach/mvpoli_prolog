@@ -7,25 +7,30 @@ as_monomial(2*cos(0)*x, m(2.0, 1, [v(1, x)])).
 as_monomial(x^0, m(1, 0, [])).
 as_monomial(x^3 * y^0 * z^2, m(1, 5, [v(3, x), v(2, z)])).
 as_monomial(a^2 * a^2, m(1, 4, [v(4, a)])).
+as_monomial(radius^2, m(1, 2, [v(2, radius)])).
 
 %%%% coefficients
 
 coefficients(poly([m(1, 3, [v(3, x)])]), [1]).
+coefficients(x^3, [1]).
 coefficients(poly([m(-4, 0, []), m(1, 2, [v(1, x), v(1, y)]), m(1, 7, [v(3, s), v(3, t), v(1, y)])]), [-4, 1, 1]).
 
 %%%% variables
 
 variables(poly([m(-1, 1, [v(1, x)]), m(1, 2, [v(1, x), v(1, y)])]), [x, y]).
 variables(poly([m(5, 2, [v(1, y), v(1, z)]), m(4, 3, [v(2, x), v(1, y)]), m(4, 4, [v(1, r), v(3, w)])]), [r, w, x, y, z]).
+variables(-x+2*x*y, [x, y]).
 
 %%%% maxdegree
 
 maxdegree(poly([m(5, 2, [v(1, y), v(1, z)]), m(4, 3, [v(2, x), v(1, y)]), m(4, 4, [v(1, r), v(3, w)])]), 4).
+maxdegree(5*y*z+4*x^2*y+4*r*w^3, 4).
 maxdegree(poly([]), 0).
 
 %%%% mindegree
 
 mindegree(poly([m(5, 2, [v(1, y), v(1, z)]), m(4, 3, [v(2, x), v(1, y)]), m(4, 4, [v(1, r), v(3, w)])]), 2).
+mindegree(5*y*z+4*x^2*y+4*r*w^3, 2).
 mindegree(poly([]), 0).
 
 %%%% as_polynomial
@@ -48,17 +53,23 @@ polyval(m(1, 2, [v(2, a)]), [3], 9).
 
 polyplus(m(2, 1, [v(1, a)]), m(3, 1, [v(1, a)]), poly([m(5, 1, [v(1, a)])])).
 polyplus(m(3, 1, [v(1, a)]), m(-3, 1, [v(1, a)]), poly([])).
+polyplus(3*a, poly([]), poly([m(3, 1, [v(1, a)])])).
+polyplus(x+y, 2*x-y, poly([m(3, 1, [v(1, x)])])).
 
 %%%% polyminus
 
 polyminus(m(2, 1, [v(1, a)]), m(3, 1, [v(1, a)]), poly([m(-1, 1, [v(1, a)])])).
 polyminus(m(3, 1, [v(1, a)]), m(3, 1, [v(1, a)]), poly([])).
+polyminus(3*a, poly([]), poly([m(3, 1, [v(1, a)])])).
+polyminus(x+y, x+y, poly([])).
 
 %%%% polytimes
 
 as_monomial(y * s^3 * t^3, M1), as_polynomial(-1 * x + x * y, P1), polytimes(M1, P1, poly([m(-1, 8, [v(3, s), v(3, t), v(1, x), v(1, y)]), m(1, 9, [v(3, s), v(3, t), v(1, x), v(2, y)])])).
 as_polynomial(a+b, P), polytimes(P, P, poly([m(2, 2, [v(1, a), v(1, b)]), m(1, 2, [v(2, a)]), m(1, 2, [v(2, b)])])).
+polytimes(x^2, x+y, poly([m(1, 3, [v(2, x), v(1, y)]), m(1, 3, [v(3, x)])])).
 
 %%%% monomials
 
 as_polynomial(z*y+a*b, P), monomials(P, [m(1, 2, [v(1, a), v(1, b)]), m(1, 2, [v(1, y), v(1, z)])]).
+monomials(x+x, [m(2, 1, [v(1, x)])]).

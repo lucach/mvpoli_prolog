@@ -224,6 +224,11 @@ as_monomial(Expression, m(C, TD, ReducedVPs)) :-
 % True if Coefficients is a list where the i-th element is the coefficient of
 % the i-th monomial of Polynomial. Polynomial can also be a single monomial.
 
+coefficients(Expr, Coefficients) :-
+    as_polynomial(Expr, Poly),
+    !,
+    coefficients(Poly, Coefficients).
+
 coefficients(poly([]), []) :- !.
 
 coefficients(poly([m(C, _TD, _VPs) | Monomials]), [C | Coefficients]) :-
@@ -265,6 +270,11 @@ p_variables([M | Monomials], Vars) :-
 % Poly, it is sorted and does not contain duplicates. Poly can also be a
 % single monomial.
 
+variables(Expr, Variables) :-
+    as_polynomial(Expr, Poly),
+    !,
+    variables(Poly, Variables).
+
 variables(poly(Monomials), SortedVars) :-
     p_variables(Monomials, Vars),
     !,
@@ -279,6 +289,11 @@ variables(Monomial, Variables) :-
 %%      maxdegree(Poly, Degree)
 % True if Degree is the maximum degree of the monomials in Poly. When Poly is
 % a single monomial, Degree is the degree of that monomial.
+
+maxdegree(Expr, Degree) :-
+    as_polynomial(Expr, Poly),
+    !,
+    maxdegree(Poly, Degree).
 
 maxdegree(poly([]), 0) :- !.
 
@@ -295,6 +310,11 @@ maxdegree(m(C, TD, VPs), TD) :-
 %%      mindegree(Poly, Degree)
 % True if Degree is the minimum degree of the monomials in Poly. When Poly is
 % a single monomial, Degree is the degree of that monomial.
+
+mindegree(Expr, Degree) :-
+    as_polynomial(Expr, Poly),
+    !,
+    mindegree(Poly, Degree).
 
 mindegree(poly([]), 0) :- !.
 
@@ -424,7 +444,7 @@ reduce_poly(poly([m(C1, TD1, VPs1), M2 | Ms]),
             poly([m(C1, TD1, VPs1) | ReducedM])) :-
     C1 \= 0,
     !,
-    reduce_poly(poly([M2 | Monomials]), poly(ReducedM)).
+    reduce_poly(poly([M2 | Ms]), poly(ReducedM)).
 
 
 %%      as_polynomail(Expression, poly(Monomials))
@@ -495,6 +515,11 @@ compute_poly_val([M | Monomials], Variables, VariableValues, TotalValue) :-
 % Polynomial can also be a monomial or an Expression, which is parsed with
 % as_polynomial/2.
 
+polyval(Expression, VariableValues, Value) :-
+    as_polynomial(Expression, Poly),
+    !,
+    polyval(Poly, VariableValues, Value).
+
 polyval(poly(Monomials), VariableValues, Value) :-
     !,
     variables(poly(Monomials), Variables),
@@ -505,14 +530,20 @@ polyval(Monomial, VariableValues, Value) :-
 	!,
 	polyval(poly([Monomial]), VariableValues, Value).
 
-polyval(Expression, VariableValues, Value) :-
-    as_polynomial(Expression, Poly),
-    polyval(Poly, VariableValues, Value).
-
 
 %%      polyplus(Poly1, Poly2, Result)
 % True if Result is the polynomial sum of Poly1 and Poly2. Note that Poly1 and
 % Poly2 can also be monomials.
+
+polyplus(Expr, Poly2, Result) :-
+    as_polynomial(Expr, Poly1),
+    !,
+    polyplus(Poly1, Poly2, Result).
+
+polyplus(Poly1, Expr, Result) :-
+    as_polynomial(Expr, Poly2),
+    !,
+    polyplus(Poly1, Poly2, Result).
 
 polyplus(m(C, TD, VPs), Poly2, Result) :-
     polyplus(poly([m(C, TD, VPs)]), Poly2, Result),
@@ -539,13 +570,20 @@ negate_coeff(m(Coeff, TD, VPs), m(NegCoeff, TD, VPs)) :-
 % True if Result is the polynomial dif. of Poly1 and Poly2. Note that Poly1
 % and Poly2 can also be monomials.
 
+polyminus(Poly1, Expr, Result) :-
+    as_polynomial(Expr, Poly2),
+    !,
+    polyminus(Poly1, Poly2, Result).
+
 polyminus(Poly1, poly(Monomials2), Result) :-
     maplist(negate_coeff, Monomials2, NegMonomials2),
-    polyplus(Poly1, poly(NegMonomials2), Result).
+    polyplus(Poly1, poly(NegMonomials2), Result),
+    !.
 
 polyminus(Poly1, m(C, TD, VPs), Result) :-
     negate_coeff(m(C, TD, VPs), m(NegCoeff, TD, VPs)),
-    polyplus(Poly1, poly([m(NegCoeff, TD, VPs)]), Result).
+    polyplus(Poly1, poly([m(NegCoeff, TD, VPs)]), Result),
+    !.
 
 
 %%      reduce_varpowers(VPs, ReducedVPs)
@@ -609,6 +647,16 @@ monomial_times_poly(m(C, TD, VPs), poly([M | Monomials]), poly(Result)) :-
 % Poly2 using monomial_times_poly/3. The resulting polynomial is then sorted
 % and reduced with reduce_poly/2 if needed.
 
+polytimes(Expr, Poly2, PolyResult) :-
+    as_polynomial(Expr, Poly1),
+    !,
+    polytimes(Poly1, Poly2, PolyResult).
+
+polytimes(Poly1, Expr, PolyResult) :-
+    as_polynomial(Expr, Poly2),
+    !,
+    polytimes(Poly1, Poly2, PolyResult).
+
 polytimes(poly([]), poly(_), poly([])) :- !.
 
 polytimes(m(C, TD, VPs), Poly2, PolyResult) :-
@@ -630,6 +678,11 @@ polytimes(poly([M | M1]), poly(M2), ReducedPoly) :-
 %%      monomials(Poly, Monomials)
 % True if Monomial is the list of monomials appearing in Poly sorted using
 % degree_compare_monomials/3.
+
+monomials(Expr, Monomials) :-
+    as_polynomial(Expr, Poly),
+    !,
+    monomials(Poly, Monomials).
 
 monomials(poly(Monomials), SortedMonomials) :-
     predsort(degree_compare_monomials, Monomials, SortedMonomials).
