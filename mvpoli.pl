@@ -477,9 +477,7 @@ compute_variable_val(v(Power, Var), Variables, VariableValues, Value) :-
 % True if Value is the product of all values of variables in VPs,
 % calculated using compute_variable_val/4.
 
-compute_variables_val([VP], Variables, VariableValues, Value) :-
-    compute_variable_val(VP, Variables, VariableValues, Value),
-    !.
+compute_variables_val([], _, _, 1) :- !.
 
 compute_variables_val([VP | VPs], Variables, VariableValues, TotalValue) :-
     compute_variable_val(VP, Variables, VariableValues, Value1),
