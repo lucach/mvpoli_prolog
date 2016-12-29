@@ -209,6 +209,14 @@ lexicographically_compare_VP_without_equal(>, VP1, VP2) :-
     lexicographically_compare_VP(>, VP1, VP2),
     !.
 
+%%		normalize_zero(m1, m2)
+% When m1 has a non-zero, true when m2 equals m1. Otherwise, true when m2 is
+% the standard zero monomial, i.e. m(0, 0, []).
+
+normalize_zero(m(0, _TD, _VPs), m(0, 0, [])) :- !.
+
+normalize_zero(m(C, TD, VPs), m(C, TD, VPs)) :- !.
+
 
 %%      as_monomial(Expression, m(C, TD, SortedVPs))
 % True if m(C, TD, SortedVPs) is the monomial corresponding to Expression,
@@ -216,7 +224,8 @@ lexicographically_compare_VP_without_equal(>, VP1, VP2) :-
 % VarPowers sorted using lexicographically_compare_VP/3.
 
 as_monomial(Expression, m(C, TD, ReducedVPs)) :-
-    parse_monomial(Expression, m(C, _, VPs)),
+    parse_monomial(Expression, m(Cparsed, _, VPsparsed)),
+    normalize_zero(m(Cparsed, _, VPsparsed), m(C, _, VPs)),
     get_totaldegree(m(C, TD, VPs)),
     remove_zero_exp_varpowers(VPs, VPsWithoutZeroExp),
     predsort(lexicographically_compare_VP_without_equal,

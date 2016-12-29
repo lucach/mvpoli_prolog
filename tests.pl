@@ -11,6 +11,7 @@ as_monomial(a^2 * a^2, m(1, 4, [v(4, a)])).
 as_monomial(radius^2, m(1, 2, [v(2, radius)])).
 as_monomial(-x, m(-1, 1, [v(1, x)])).
 as_monomial(-2*x, m(-2, 1, [v(1, x)])).
+as_monomial(0*x, m(0, 0, [])).
 
 %%%% coefficients
 
