@@ -342,7 +342,8 @@ mindegree(m(C, TD, VPs), TD) :-
 % the parsing of Ei.
 
 parse_polynomial(M, [ParsedM]) :-
-    as_monomial(M, ParsedM).
+    as_monomial(M, ParsedM),
+    !.
 
 parse_polynomial(Monomials + M, [ParsedM | ParsedMonomials]) :-
     as_monomial(M, ParsedM),
