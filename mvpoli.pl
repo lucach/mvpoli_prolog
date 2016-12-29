@@ -129,11 +129,16 @@ parse_varpower(Variable^Power, v(Power, Variable)) :-
 % True if Expression is in the form E1 * E2 * ... * En, where for each Ei
 % (i ranges from 1 to n) parse_varpower(Ei, _) is true.
 % If the first expression is a computable expression, the number resulting
-% from that computation is C. Otherwise, C defaults to 1.
+% from that computation is C. Otherwise, C defaults to 1 (or -1 when there is
+% the minus sign).
 
 parse_monomial(Expression, m(Coefficient, _TD, [])) :-
     arithmetic_expression_value(Expression, Coefficient),
     !.
+
+parse_monomial(-Expression, m(-1, _TD, [VP])) :-
+	!,
+	parse_varpower(Expression, VP).
 
 parse_monomial(Expression, m(1, _TD, [VP])) :-
     parse_varpower(Expression, VP).
@@ -338,10 +343,6 @@ mindegree(m(C, TD, VPs), TD) :-
 
 parse_polynomial(M, [ParsedM]) :-
     as_monomial(M, ParsedM).
-
-parse_polynomial(-M, [m(NegCoeff, TD, VPs)]) :-
-    as_monomial(M, m(Coeff, TD, VPs)),
-    NegCoeff is -Coeff.
 
 parse_polynomial(Monomials + M, [ParsedM | ParsedMonomials]) :-
     as_monomial(M, ParsedM),
