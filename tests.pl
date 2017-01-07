@@ -47,6 +47,7 @@ as_polynomial(a*c+a^2+a*b+a, poly([m(1, 1, [v(1, a)]), m(1, 2, [v(1, a), v(1, b)
 as_polynomial(0*a+x, poly([m(1, 1, [v(1, x)])])).
 as_polynomial(a^2 + a*c + a + a*z, poly([m(1, 1, [v(1, a)]), m(1, 2, [v(1, a), v(1, c)]), m(1, 2, [v(1, a), v(1, z)]), m(1, 2, [v(2, a)])])).
 as_polynomial(0+0, poly([])).
+as_polynomial(0, poly([])).
 
 %%%% polyval
 
