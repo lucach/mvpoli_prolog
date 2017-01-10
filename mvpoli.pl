@@ -234,6 +234,17 @@ as_monomial(Expression, m(C, TD, ReducedVPs)) :-
     reduce_varpowers(SortedVPs, ReducedVPs).
 
 
+%%		monomials_coefficients(Monomials, Coefficients)
+% True if Coefficients is a list where the i-th element is the coefficient of
+% the i-th monomial in Monomials.
+
+monomials_coefficients([], []) :- !.
+
+monomials_coefficients([m(C, _TD, _VPs) | Monomials], [C | Coefficients]) :-
+    !,
+    monomials_coefficients(Monomials, Coefficients).
+
+
 %%      coefficients(Polynomial, Coefficients)
 % True if Coefficients is a list where the i-th element is the coefficient of
 % the i-th monomial of Polynomial. Polynomial can also be a single monomial.
@@ -243,11 +254,11 @@ coefficients(Expr, Coefficients) :-
     !,
     coefficients(Poly, Coefficients).
 
-coefficients(poly([]), []) :- !.
-
-coefficients(poly([m(C, _TD, _VPs) | Monomials]), [C | Coefficients]) :-
-    !,
-    coefficients(poly(Monomials), Coefficients).
+coefficients(Poly, Coefficients) :-
+	is_polynomial(Poly),
+	!,
+	monomials(Poly, Monomials),
+	monomials_coefficients(Monomials, Coefficients).
 
 coefficients(Monomial, Coefficients) :-
     is_monomial(Monomial),
@@ -692,6 +703,8 @@ monomials(Expr, Monomials) :-
     as_polynomial(Expr, Poly),
     !,
     monomials(Poly, Monomials).
+
+monomials(poly([]), [m(0, 0, [])]) :- !.
 
 monomials(poly(Monomials), SortedMonomials) :-
     predsort(degree_compare_monomials, Monomials, SortedMonomials).

@@ -18,6 +18,7 @@ as_monomial(0*x, m(0, 0, [])).
 coefficients(poly([m(1, 3, [v(3, x)])]), [1]).
 coefficients(x^3, [1]).
 coefficients(poly([m(-4, 0, []), m(1, 2, [v(1, x), v(1, y)]), m(1, 7, [v(3, s), v(3, t), v(1, y)])]), [-4, 1, 1]).
+coefficients(poly([]), [0]).
 
 %%%% variables
 
