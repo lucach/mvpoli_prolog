@@ -74,11 +74,11 @@ polyminus(x+y, x+y, poly([])).
 
 %%%% polytimes
 
-as_monomial(y * s^3 * t^3, M1), as_polynomial(-1 * x + x * y, P1), polytimes(M1, P1, poly([m(-1, 8, [v(3, s), v(3, t), v(1, x), v(1, y)]), m(1, 9, [v(3, s), v(3, t), v(1, x), v(2, y)])])).
-as_polynomial(a+b, P), polytimes(P, P, poly([m(2, 2, [v(1, a), v(1, b)]), m(1, 2, [v(2, a)]), m(1, 2, [v(2, b)])])).
+polytimes(y*s^3*t^3, -1*x+x*y, poly([m(-1, 8, [v(3, s), v(3, t), v(1, x), v(1, y)]), m(1, 9, [v(3, s), v(3, t), v(1, x), v(2, y)])])).
+polytimes(a+b, a+b, poly([m(2, 2, [v(1, a), v(1, b)]), m(1, 2, [v(2, a)]), m(1, 2, [v(2, b)])])).
 polytimes(x^2, x+y, poly([m(1, 3, [v(2, x), v(1, y)]), m(1, 3, [v(3, x)])])).
 
 %%%% monomials
 
-as_polynomial(z*y+a*b, P), monomials(P, [m(1, 2, [v(1, a), v(1, b)]), m(1, 2, [v(1, y), v(1, z)])]).
+monomials(z*y+a*b, [m(1, 2, [v(1, a), v(1, b)]), m(1, 2, [v(1, y), v(1, z)])]).
 monomials(x+x, [m(2, 1, [v(1, x)])]).
