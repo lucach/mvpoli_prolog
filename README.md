@@ -1,1 +1,0 @@
-# mvpoli_prolog
